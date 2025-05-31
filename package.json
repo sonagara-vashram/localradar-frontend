@@ -13,6 +13,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.1",
     "@tailwindcss/vite": "^4.0.3",
+    "@vercel/analytics": "^1.5.0",
     "axios": "^1.7.9",
     "crypto-js": "^4.2.0",
     "framer-motion": "^12.4.4",
