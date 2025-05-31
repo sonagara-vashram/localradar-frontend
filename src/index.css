@@ -1,0 +1,97 @@
+/* Alway import google fonts on top of the css*/
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+@import "tailwindcss";
+
+@font-face {
+  font-family: Bebas;
+  src: url("./assets/fonts/Bebas_Neue.ttf");
+}
+
+@font-face {
+  font-family: ios-emoji;
+  src: url("./assets/fonts/ios-emoji.ttf");
+}
+
+@font-face {
+  font-family: heading-thin;
+  src: url("./assets/fonts/Heading-Pro-Light-trial.ttf");
+}
+
+@font-face {
+  font-family: heading-bold;
+  src: url("./assets/fonts/Heading-Pro-Bold-trial.ttf");
+}
+
+@theme {
+  --font-bebas: Bebas, "sans-serif";
+  --font-ios-emoji: ios-emoji, "sans-serif";
+  --font-heading-thin: heading-thin, "sans-serif";
+  --font-heading-bold: heading-bold, "sans-serif";
+  --font-poppins: "Poppins";
+  --font-roboto: "Roboto", sans-serif;
+
+  /* Local Radar Project Color Palette */
+
+  /* Primary brand color - lime green */
+  --lr-primary: #bdfb3e;
+  --lr-primary-100: #f2fed8;
+  --lr-primary-200: #e5fdb2;
+  --lr-primary-300: #d7fd8b;
+  --lr-primary-400: #cafc65;
+  --lr-primary-500: #bdfb3e; /* Brand Color */
+  --lr-primary-600: #97c932;
+  --lr-primary-700: #719725;
+  --lr-primary-800: #4c6419;
+  --lr-primary-900: #26320c;
+
+  /* UI dark theme colors */
+  --lr-dark: #0d0c22;
+  --lr-dark-100: #cfced3;
+  --lr-dark-200: #9e9ea7;
+  --lr-dark-300: #6e6d7a;
+  --lr-dark-400: #3d3d4e;
+  --lr-dark-500: #0d0c22;
+  --lr-dark-600: #0a0a1b;
+  --lr-dark-700: #080714;
+  --lr-dark-800: #05050e;
+  --lr-dark-900: #030207;
+
+  /* Neutral/gray colors */
+  --lr-neutral: #eaeaea;
+  --lr-neutral-100: #fbfbfb;
+  --lr-neutral-200: #f7f7f7;
+  --lr-neutral-300: #f2f2f2;
+  --lr-neutral-400: #eeeeee;
+  --lr-neutral-500: #eaeaea;
+  --lr-neutral-600: #bbbbbb;
+  --lr-neutral-700: #8c8c8c;
+  --lr-neutral-800: #5e5e5e;
+  --lr-neutral-900: #2f2f2f;
+
+  /* Background/white colors */
+  --lr-background: #fefefe;
+  --lr-background-alt: #fcfcfc;
+
+  /* Text colors */
+  --lr-text: #343131;
+  --lr-text-100: #d6d6d6;
+  --lr-text-200: #aeadad;
+  --lr-text-300: #858383;
+  --lr-text-400: #5d5a5a;
+  --lr-text-500: #343131;
+  --lr-text-600: #2a2727;
+  --lr-text-700: #1f1d1d;
+  --lr-text-800: #151414;
+  --lr-text-900: #0a0a0a;
+
+  /* Animation Colors from Home.jsx */
+  --lr-animate-green-1: #99e404;
+  --lr-animate-green-2: #a7ff00;
+  --lr-animate-green-3: #89c107;
+
+  /* Tailwind mappings */
+  --lr-gray-600: #4b5563;
+  --lr-gray-800: #1f2937;
+  --lr-gray-900: #111827;
+  --lr-white: #ffffff;
+}
