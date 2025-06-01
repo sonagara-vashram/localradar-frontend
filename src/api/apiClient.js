@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const BASE_URL = "https://my-cool-scraper-api.onrender.com";
 
 if (!BASE_URL) {
   console.error("Error: VITE_API_BASE_URL is not defined in environment variables.");
