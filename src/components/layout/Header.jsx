@@ -11,21 +11,6 @@ import logo from "../../assets/imgs/LR.png";
 import Button from "../common/Button";
 import AnimateButton from "../common/Button2";
 
-// dark mode state
-const [darkMode, setDarkMode] = useState(() => {
-  return localStorage.getItem("theme") === "dark";
-});
-
-useEffect(() => {
-  if (darkMode) {
-    document.documentElement.classList.add("dark");
-    localStorage.setItem("theme", "dark");
-  } else {
-    document.documentElement.classList.remove("dark");
-    localStorage.setItem("theme", "light");
-  }
-}, [darkMode]);
-
 // Animation variants
 const menuVariants = {
   hidden: { y: "-100%", transition: { duration: 1, ease: [0.83, 0, 0.17, 1] } },
@@ -168,42 +153,21 @@ const Header = () => {
         </button>
       </div>
       <div className="hidden md:flex mx-8 items-center">
-      {/* Theme toggle button */}
-      <button
-        onClick={() => setDarkMode(!darkMode)}
-        className="mr-3 p-2 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
-        title="Toggle theme"
-      >
-        {darkMode ? (
-          <span role="img" aria-label="Light mode">🌞</span>
-        ) : (
-          <span role="img" aria-label="Dark mode">🌙</span>
-        )}
-      </button>
-      <AnimateButton to="/login" text="Sign In" />
-    </div>
+        <AnimateButton to="/login" text="Sign In" />
+      </div>
 
       {/* Mobile search toggle - below md screens */}
       <div className="md:hidden flex items-center">
-      <button
-        onClick={() => {/* ... */}}
-        className="text-gray-600 cursor-pointer mr-6 hover:text-black transition-all duration-300"
-      >
-        <FiSearch size={25} />
-      </button>
-      {/* Mobile theme toggle button */}
-      <button
-        onClick={() => setDarkMode(!darkMode)}
-        className="p-2 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
-        title="Toggle theme"
-      >
-        {darkMode ? (
-          <span role="img" aria-label="Light mode">🌞</span>
-        ) : (
-          <span role="img" aria-label="Dark mode">🌙</span>
-        )}
-      </button>
-    </div>
+        <button
+          onClick={() => {
+            setMobileSearchOpen(!mobileSearchOpen);
+            setMobileMenuOpen(false);
+          }}
+          className="text-gray-600 cursor-pointer mr-6 hover:text-black transition-all duration-300"
+        >
+          <FiSearch size={25} />
+        </button>
+      </div>
 
       {/* Mobile search overlay */}
       <AnimatePresence>
