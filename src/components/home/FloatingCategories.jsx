@@ -1,76 +1,39 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { PLACE_CATEGORIES } from "../../data/categories";
 
-const categories = PLACE_CATEGORIES
-  .filter((cat) =>
-    [
-      "hotels",
-      "restaurant",
-      "hospitals",
-      "schools",
-      "gyms",
-      "coffeeshops",
-      "shoppingmalls",
-      "parks",
-      "museums",
-      "cinemas",
-    ].includes(cat.id)
-  )
-  .map((cat) => ({
-    id: cat.id,
-    name: cat.name,
-    color: cat.color || "bg-white border-lime-300",
-    icon: cat.icon,
-  }));
+const CATEGORY_IDS = [
+  "hotels",
+  "restaurant",
+  "hospitals",
+  "schools",
+  "gyms",
+  "coffeeshops",
+  "shoppingmalls",
+  "parks",
+  "museums",
+  "cinemas",
+];
 
-const getRandom = (min, max) => Math.random() * (max - min) + min;
+const categories = PLACE_CATEGORIES.filter(cat => CATEGORY_IDS.includes(cat.id));
 
 export default function FloatingCategories() {
-  const [positions, setPositions] = useState(
-    categories.map(() => ({
-      x: getRandom(10, 80),
-      y: getRandom(10, 70),
-      dx: getRandom(-0.2, 0.2),
-      dy: getRandom(-0.2, 0.2),
-    }))
-  );
+  const [offset, setOffset] = useState(0); // -1 (left) to 1 (right)
   const [hovered, setHovered] = useState(null);
   const navigate = useNavigate();
-  const animationRef = useRef();
+  const containerRef = useRef();
 
-  useEffect(() => {
-    const animate = () => {
-      setPositions((prev) =>
-        prev.map((pos) => {
-          let nx = pos.x + pos.dx;
-          let ny = pos.y + pos.dy;
-          if (nx < 0 || nx > 90) pos.dx *= -1;
-          if (ny < 0 || ny > 80) pos.dy *= -1;
-          return {
-            ...pos,
-            x: Math.max(0, Math.min(90, nx)),
-            y: Math.max(0, Math.min(80, ny)),
-          };
-        })
-      );
-      animationRef.current = requestAnimationFrame(animate);
-    };
-    animationRef.current = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationRef.current);
-  }, []);
-
-  // Mouse move: move opposite
+  // Mouse move handler
   const handleMouseMove = (e) => {
-    const { clientX, clientY } = e;
-    setPositions((prev) =>
-      prev.map((pos) => {
-        const dx = (window.innerWidth / 2 - clientX) * 0.0005;
-        const dy = (window.innerHeight / 2 - clientY) * 0.0005;
-        return { ...pos, dx: pos.dx + dx, dy: pos.dy + dy };
-      })
-    );
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const percent = (x / rect.width) * 2 - 1; // -1 (left) to 1 (right)
+    setOffset(percent);
   };
+
+  // Mouse leave: reset to center
+  const handleMouseLeave = () => setOffset(0);
 
   // Click: redirect
   const handleClick = (cat) => {
@@ -79,41 +42,50 @@ export default function FloatingCategories() {
 
   return (
     <div
-      className="fixed inset-0 pointer-events-none z-0"
-      style={{ overflow: "hidden" }}
+      ref={containerRef}
+      className="absolute inset-0 flex items-center justify-center pointer-events-none z-0"
+      style={{ top: 0, left: 0, width: "100%", height: "100%" }}
       onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
     >
-      {categories.map((cat, i) => (
-        <div
-          key={cat.id}
-          role="button"
-          tabIndex={0}
-          aria-label={cat.name}
-          className={`absolute transition-all duration-300 rounded-xl shadow-md border ${cat.color} text-gray-900 font-semibold flex items-center justify-center cursor-pointer pointer-events-auto
-            ${hovered === i ? "scale-125 z-10 border-2 border-lime-400 bg-lime-50" : ""}
-            text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-lime-400`}
-          style={{
-            transform: `translate(-50%, -50%) translate(${positions[i].x}vw, ${positions[i].y}vh)`,
-            padding: hovered === i ? "1rem 2.2rem" : "0.5rem 1.2rem",
-            boxShadow: hovered === i ? "0 4px 24px 0 #bdfb3e44" : "0 2px 8px 0 #0001",
-            fontSize: hovered === i ? "1.2rem" : "1rem",
-            minWidth: 80,
-            maxWidth: 180,
-            whiteSpace: "nowrap",
-            transition: "all 0.25s cubic-bezier(.4,2,.6,1)",
-            willChange: "transform",
-          }}
-          onMouseEnter={() => setHovered(i)}
-          onMouseLeave={() => setHovered(null)}
-          onClick={() => handleClick(cat)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") handleClick(cat);
-          }}
-        >
-          <span className="mr-2 text-lime-500">{cat.icon}</span>
-          {cat.name}
-        </div>
-      ))}
+      <div
+        className="flex flex-wrap gap-4 justify-center items-center transition-transform duration-500"
+        style={{
+          transform: `translateX(${offset * 40}px)`, // max 40px left/right
+          transition: "transform 0.5s cubic-bezier(.4,2,.6,1)",
+          pointerEvents: "auto",
+          maxWidth: "700px",
+        }}
+      >
+        {categories.map((cat, i) => (
+          <div
+            key={cat.id}
+            role="button"
+            tabIndex={0}
+            aria-label={cat.name}
+            className={`bg-white border border-gray-200 shadow-md text-gray-800 font-medium rounded-xl px-4 py-2 m-1 flex items-center justify-center cursor-pointer transition-all duration-300
+              ${hovered === i ? "scale-110 border-blue-300 shadow-lg z-10" : ""}
+              text-xs md:text-sm pointer-events-auto`}
+            style={{
+              minWidth: 90,
+              maxWidth: 180,
+              whiteSpace: "nowrap",
+              fontSize: hovered === i ? "1.1rem" : "1rem",
+              transition: "all 0.25s cubic-bezier(.4,2,.6,1)",
+              userSelect: "none",
+            }}
+            onMouseEnter={() => setHovered(i)}
+            onMouseLeave={() => setHovered(null)}
+            onClick={() => handleClick(cat)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") handleClick(cat);
+            }}
+          >
+            <span className="mr-2">{cat.icon}</span>
+            {cat.name}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
