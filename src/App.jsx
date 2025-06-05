@@ -12,6 +12,7 @@ import CategoryDetail from "./pages/Service";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
+import ScrollToTop from "./components/common/ScrollToTop";
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
         <PersistGate loading={null} persistor={persistor}>
           <Router>
             <Header />
+              <ScrollToTop />
             <div className="mx-auto bg-[var(--lr-background-alt)]">
               <Routes>
                 <Route path="/" element={<Home />} />
