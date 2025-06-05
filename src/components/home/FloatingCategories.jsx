@@ -9,11 +9,19 @@ function getRandom(min, max) {
   return Math.random() * (max - min) + min;
 }
 
-// Avoid area (hero text): center 40% width, 30% height
-const avoidArea = { x1: 30, x2: 70, y1: 32, y2: 62 };
+// Multiple avoid areas for hero text (percentages)
+const avoidAreas = [
+  { x1: 30, x2: 70, y1: 18, y2: 28 }, // Discover
+  { x1: 23, x2: 77, y1: 28, y2: 40 }, // Everything
+  { x1: 35, x2: 65, y1: 40, y2: 50 }, // about
+  { x1: 28, x2: 72, y1: 50, y2: 62 }, // YourLocation
+  { x1: 20, x2: 80, y1: 62, y2: 70 }, // subtext
+];
 
-function isInAvoidArea(x, y) {
-  return x > avoidArea.x1 && x < avoidArea.x2 && y > avoidArea.y1 && y < avoidArea.y2;
+function isInAnyAvoidArea(x, y) {
+  return avoidAreas.some(
+    (a) => x > a.x1 && x < a.x2 && y > a.y1 && y < a.y2
+  );
 }
 
 export default function FloatingCategories() {
@@ -30,7 +38,7 @@ export default function FloatingCategories() {
         x = getRandom(8, 85);
         y = getRandom(8, 70);
         tries++;
-      } while (isInAvoidArea(x, y) && tries < 10);
+      } while (isInAnyAvoidArea(x, y) && tries < 10);
       return { x, y };
     })
   );
@@ -63,15 +71,20 @@ export default function FloatingCategories() {
       onMouseLeave={handleMouseLeave}
     >
       {categories.map((cat, i) => {
-        // X/Y offset: random + mouse offset (max 40px X, 18px Y)
-        const xOffset = offset.x * 40;
-        const yOffset = offset.y * 18;
+        // Distance from center (0,0) to card's base position
         const pos = positionsRef.current[i];
-        // Card ki new position
+        const dx = pos.x - 50;
+        const dy = pos.y - 40;
+        // Farther cards move less, closer cards move more
+        const moveFactor = 1 - Math.min(Math.sqrt(dx * dx + dy * dy) / 60, 1); // 0 (far) to 1 (center)
+        // Opposite direction, smooth
+        const xOffset = offset.x * 40 * moveFactor;
+        const yOffset = offset.y * 18 * moveFactor;
+        // Card ki new position (percent)
         const cardX = pos.x + (xOffset / (containerRef.current?.offsetWidth || 1)) * 100;
         const cardY = pos.y + (yOffset / (containerRef.current?.offsetHeight || 1)) * 100;
         // Agar avoid area me hai to hide
-        const hide = isInAvoidArea(cardX, cardY);
+        const hide = isInAnyAvoidArea(cardX, cardY);
 
         return (
           <div
