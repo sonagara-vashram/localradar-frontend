@@ -93,9 +93,11 @@ const Header = () => {
 
   // Handle search submission
   const handleSearch = () => {
-    if (searchQuery.trim())
-      navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
-  };
+  if (searchQuery.trim()) {
+    navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
+    setMobileSearchOpen(false);
+  }
+};
 
   // Handle enter key on search inputs
   const handleKeyDown = (e) => {
