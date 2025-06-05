@@ -2,25 +2,38 @@ import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { PLACE_CATEGORIES } from "../../data/categories";
 
-// 22 random categories (aur bhi le sakte ho)
-const categories = PLACE_CATEGORIES.slice(0, 22);
+// 18 random categories
+const categories = PLACE_CATEGORIES.slice(0, 18);
 
 function getRandom(min, max) {
   return Math.random() * (max - min) + min;
 }
 
+// Avoid area (text ke liye): center 40% width, 30% height
+const avoidArea = { x1: 30, x2: 70, y1: 32, y2: 62 };
+
+function isInAvoidArea(x, y) {
+  return x > avoidArea.x1 && x < avoidArea.x2 && y > avoidArea.y1 && y < avoidArea.y2;
+}
+
 export default function FloatingCategories() {
-  const [offset, setOffset] = useState(0); // -1 (left) to 1 (right)
+  const [offset, setOffset] = useState({ x: 0, y: 0 }); // -1 to 1
   const [hovered, setHovered] = useState(null);
   const navigate = useNavigate();
   const containerRef = useRef();
 
-  // Random positions ek hi bar generate karo
+  // Random positions, avoid text area
   const positionsRef = useRef(
-    categories.map(() => ({
-      x: getRandom(10, 85), // percent of width
-      y: getRandom(10, 70), // percent of height
-    }))
+    categories.map(() => {
+      let x, y;
+      let tries = 0;
+      do {
+        x = getRandom(8, 85);
+        y = getRandom(8, 70);
+        tries++;
+      } while (isInAvoidArea(x, y) && tries < 10);
+      return { x, y };
+    })
   );
 
   // Mouse move handler
@@ -28,12 +41,14 @@ export default function FloatingCategories() {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
-    const percent = (x / rect.width) * 2 - 1; // -1 (left) to 1 (right)
-    setOffset(percent);
+    const y = e.clientY - rect.top;
+    const percentX = (x / rect.width) * 2 - 1; // -1 to 1
+    const percentY = (y / rect.height) * 2 - 1; // -1 to 1
+    setOffset({ x: percentX, y: percentY });
   };
 
   // Mouse leave: reset to center
-  const handleMouseLeave = () => setOffset(0);
+  const handleMouseLeave = () => setOffset({ x: 0, y: 0 });
 
   // Click: redirect
   const handleClick = (cat) => {
@@ -49,8 +64,9 @@ export default function FloatingCategories() {
       onMouseLeave={handleMouseLeave}
     >
       {categories.map((cat, i) => {
-        // X position: random + mouse offset (max 48px left/right)
-        const xOffset = offset * 48;
+        // X/Y offset: random + mouse offset (max 40px)
+        const xOffset = offset.x * 40;
+        const yOffset = offset.y * 18;
         const pos = positionsRef.current[i];
         return (
           <div
@@ -58,18 +74,18 @@ export default function FloatingCategories() {
             role="button"
             tabIndex={0}
             aria-label={cat.name}
-            className={`bg-white border border-gray-200 shadow-md text-gray-800 font-medium rounded-xl px-3 py-1 flex items-center justify-center cursor-pointer transition-all duration-300
+            className={`bg-white border border-gray-200 shadow-md text-gray-800 font-medium rounded-xl px-4 py-2 flex items-center justify-center cursor-pointer transition-all duration-200
               ${hovered === i ? "scale-110 border-blue-300 shadow-lg z-10" : ""}
               text-xs md:text-sm pointer-events-auto`}
             style={{
               position: "absolute",
               left: `calc(${pos.x}% + ${xOffset}px)`,
-              top: `${pos.y}%`,
+              top: `calc(${pos.y}% + ${yOffset}px)`,
               minWidth: 90,
               maxWidth: 180,
               whiteSpace: "nowrap",
               fontSize: hovered === i ? "1.08rem" : "0.98rem",
-              transition: "all 0.25s cubic-bezier(.4,2,.6,1)",
+              transition: "all 0.22s cubic-bezier(.4,2,.6,1)",
               userSelect: "none",
               boxShadow: hovered === i
                 ? "0 4px 24px 0 #b0b0b044"
