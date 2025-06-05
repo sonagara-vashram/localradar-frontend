@@ -9,7 +9,7 @@ function getRandom(min, max) {
   return Math.random() * (max - min) + min;
 }
 
-// Avoid area (text ke liye): center 40% width, 30% height
+// Avoid area (hero text): center 40% width, 30% height
 const avoidArea = { x1: 30, x2: 70, y1: 32, y2: 62 };
 
 function isInAvoidArea(x, y) {
@@ -25,8 +25,7 @@ export default function FloatingCategories() {
   // Random positions, avoid text area
   const positionsRef = useRef(
     categories.map(() => {
-      let x, y;
-      let tries = 0;
+      let x, y, tries = 0;
       do {
         x = getRandom(8, 85);
         y = getRandom(8, 70);
@@ -36,7 +35,7 @@ export default function FloatingCategories() {
     })
   );
 
-  // Mouse move handler
+  // Mouse move handler (opposite direction)
   const handleMouseMove = (e) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
@@ -44,7 +43,7 @@ export default function FloatingCategories() {
     const y = e.clientY - rect.top;
     const percentX = (x / rect.width) * 2 - 1; // -1 to 1
     const percentY = (y / rect.height) * 2 - 1; // -1 to 1
-    setOffset({ x: percentX, y: percentY });
+    setOffset({ x: -percentX, y: -percentY }); // Opposite direction
   };
 
   // Mouse leave: reset to center
@@ -64,17 +63,24 @@ export default function FloatingCategories() {
       onMouseLeave={handleMouseLeave}
     >
       {categories.map((cat, i) => {
-        // X/Y offset: random + mouse offset (max 40px)
+        // X/Y offset: random + mouse offset (max 40px X, 18px Y)
         const xOffset = offset.x * 40;
         const yOffset = offset.y * 18;
         const pos = positionsRef.current[i];
+        // Card ki new position
+        const cardX = pos.x + (xOffset / (containerRef.current?.offsetWidth || 1)) * 100;
+        const cardY = pos.y + (yOffset / (containerRef.current?.offsetHeight || 1)) * 100;
+        // Agar avoid area me hai to hide
+        const hide = isInAvoidArea(cardX, cardY);
+
         return (
           <div
             key={cat.id}
             role="button"
             tabIndex={0}
             aria-label={cat.name}
-            className={`bg-white border border-gray-200 shadow-md text-gray-800 font-medium rounded-xl px-4 py-2 flex items-center justify-center cursor-pointer transition-all duration-200
+            className={`bg-white border border-gray-200 shadow-md text-gray-800 font-medium rounded-xl px-4 py-2 flex items-center justify-center cursor-pointer
+              transition-transform transition-shadow transition-colors duration-300
               ${hovered === i ? "scale-110 border-blue-300 shadow-lg z-10" : ""}
               text-xs md:text-sm pointer-events-auto`}
             style={{
@@ -84,12 +90,15 @@ export default function FloatingCategories() {
               minWidth: 90,
               maxWidth: 180,
               whiteSpace: "nowrap",
-              fontSize: hovered === i ? "1.08rem" : "0.98rem",
-              transition: "all 0.22s cubic-bezier(.4,2,.6,1)",
+              fontSize: hovered === i ? "1.12rem" : "1rem",
+              transition: "all 0.28s cubic-bezier(.4,2,.6,1)",
               userSelect: "none",
               boxShadow: hovered === i
                 ? "0 4px 24px 0 #b0b0b044"
                 : "0 2px 8px 0 #0001",
+              opacity: hide ? 0 : 1,
+              pointerEvents: hide ? "none" : "auto",
+              zIndex: hovered === i ? 10 : hide ? 0 : 1,
             }}
             onMouseEnter={() => setHovered(i)}
             onMouseLeave={() => setHovered(null)}
