@@ -22,6 +22,18 @@
   src: url("./assets/fonts/Heading-Pro-Bold-trial.ttf");
 }
 
+/* filepath: c:\Users\HP\OneDrive\Desktop\Github\localradar\localradar-frontend\src\index.css */
+.floating-category-card {
+  position: absolute;
+  min-width: 90px;
+  max-width: 180px;
+  white-space: nowrap;
+  font-size: 1rem;
+  user-select: none;
+  box-shadow: 0 2px 8px 0 #0001;
+  z-index: 1;
+}
+
 @theme {
   --font-bebas: Bebas, "sans-serif";
   --font-ios-emoji: ios-emoji, "sans-serif";

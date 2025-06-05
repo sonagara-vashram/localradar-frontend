@@ -61,8 +61,8 @@ export default function FloatingCategories() {
         const distance = Math.sqrt(dx * dx + dy * dy);
         const moveFactor = 1 - Math.min(distance / 60, 1); // 0 (far) to 1 (center)
 
-        const xOffset = -percentX * 40 * moveFactor;
-        const yOffset = -percentY * 18 * moveFactor;
+        const xOffset = -percentX * 60 * moveFactor; // Increased speed
+        const yOffset = -percentY * 30 * moveFactor; // Increased speed
 
         const cardX = pos.x + xOffset;
         const cardY = pos.y + yOffset;
@@ -73,8 +73,8 @@ export default function FloatingCategories() {
           x: hide ? 0 : `${xOffset}px`, // Reset position if hidden
           y: hide ? 0 : `${yOffset}px`,
           opacity: hide ? 0.5 : 1, // Smooth fade instead of abrupt disappearance
-          duration: 0.5, // Increase duration for smoother animation
-          ease: "power3.out", // Use a smoother easing function
+          duration: 0.4, // Slightly faster animation for smoothness
+          ease: "power2.out", // Smooth easing
         });
       });
     };
@@ -85,8 +85,8 @@ export default function FloatingCategories() {
           x: "0px",
           y: "0px",
           opacity: 1, // Ensure opacity resets to 1
-          duration: 0.7, // Slightly longer duration for smooth reset
-          ease: "power3.out", // Smooth easing
+          duration: 0.6, // Smooth reset
+          ease: "power2.out", // Smooth easing
         });
       });
     };
@@ -120,7 +120,7 @@ export default function FloatingCategories() {
             role="button"
             tabIndex={0}
             aria-label={cat.name}
-            className={`bg-white border border-gray-200 shadow-md text-gray-800 font-medium rounded-xl px-4 py-2 flex items-center justify-center cursor-pointer
+            className={`floating-category-card bg-white border border-gray-200 shadow-md text-gray-800 font-medium rounded-xl px-4 py-2 flex items-center justify-center cursor-pointer
               transition-transform transition-shadow transition-colors duration-300
               text-xs md:text-sm pointer-events-auto`}
             style={{
