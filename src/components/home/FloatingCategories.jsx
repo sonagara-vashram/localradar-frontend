@@ -1,6 +1,7 @@
-import { useState, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { PLACE_CATEGORIES } from "../../data/categories";
+import gsap from "gsap";
 
 // 18 random categories
 const categories = PLACE_CATEGORIES.slice(0, 18);
@@ -25,12 +26,11 @@ function isInAnyAvoidArea(x, y) {
 }
 
 export default function FloatingCategories() {
-  const [offset, setOffset] = useState({ x: 0, y: 0 }); // -1 to 1
-  const [hovered, setHovered] = useState(null);
-  const navigate = useNavigate();
   const containerRef = useRef();
+  const cardsRef = useRef([]);
+  const navigate = useNavigate();
 
-  // Random positions, avoid text area
+  // Random positions for cards
   const positionsRef = useRef(
     categories.map(() => {
       let x, y, tries = 0;
@@ -43,21 +43,63 @@ export default function FloatingCategories() {
     })
   );
 
-  // Mouse move handler (opposite direction)
-  const handleMouseMove = (e) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const percentX = (x / rect.width) * 2 - 1; // -1 to 1
-    const percentY = (y / rect.height) * 2 - 1; // -1 to 1
-    setOffset({ x: -percentX, y: -percentY }); // Opposite direction
-  };
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (!containerRef.current) return;
 
-  // Mouse leave: reset to center
-  const handleMouseLeave = () => setOffset({ x: 0, y: 0 });
+      const rect = containerRef.current.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
 
-  // Click: redirect
+      const percentX = (mouseX / rect.width) * 2 - 1; // -1 to 1
+      const percentY = (mouseY / rect.height) * 2 - 1; // -1 to 1
+
+      // Move cards based on mouse position
+      positionsRef.current.forEach((pos, i) => {
+        const dx = pos.x - 50;
+        const dy = pos.y - 40;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const moveFactor = 1 - Math.min(distance / 60, 1); // 0 (far) to 1 (center)
+
+        const xOffset = -percentX * 40 * moveFactor;
+        const yOffset = -percentY * 18 * moveFactor;
+
+        const cardX = pos.x + xOffset;
+        const cardY = pos.y + yOffset;
+
+        const hide = isInAnyAvoidArea(cardX, cardY);
+
+        gsap.to(cardsRef.current[i], {
+          x: `${xOffset}px`,
+          y: `${yOffset}px`,
+          opacity: hide ? 0 : 1,
+          duration: 0.3,
+          ease: "power2.out",
+        });
+      });
+    };
+
+    const handleMouseLeave = () => {
+      positionsRef.current.forEach((_, i) => {
+        gsap.to(cardsRef.current[i], {
+          x: "0px",
+          y: "0px",
+          duration: 0.5,
+          ease: "power2.out",
+        });
+      });
+    };
+
+    const container = containerRef.current;
+    container.addEventListener("mousemove", handleMouseMove);
+    container.addEventListener("mouseleave", handleMouseLeave);
+
+    return () => {
+      container.removeEventListener("mousemove", handleMouseMove);
+      container.removeEventListener("mouseleave", handleMouseLeave);
+    };
+  }, []);
+
   const handleClick = (cat) => {
     navigate(`/services?category=${encodeURIComponent(cat.id)}`);
   };
@@ -67,54 +109,31 @@ export default function FloatingCategories() {
       ref={containerRef}
       className="absolute inset-0 pointer-events-none z-0"
       style={{ width: "100%", height: "100%" }}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
     >
       {categories.map((cat, i) => {
-        // Distance from center (0,0) to card's base position
         const pos = positionsRef.current[i];
-        const dx = pos.x - 50;
-        const dy = pos.y - 40;
-        // Farther cards move less, closer cards move more
-        const moveFactor = 1 - Math.min(Math.sqrt(dx * dx + dy * dy) / 60, 1); // 0 (far) to 1 (center)
-        // Opposite direction, smooth
-        const xOffset = offset.x * 40 * moveFactor;
-        const yOffset = offset.y * 18 * moveFactor;
-        // Card ki new position (percent)
-        const cardX = pos.x + (xOffset / (containerRef.current?.offsetWidth || 1)) * 100;
-        const cardY = pos.y + (yOffset / (containerRef.current?.offsetHeight || 1)) * 100;
-        // Agar avoid area me hai to hide
-        const hide = isInAnyAvoidArea(cardX, cardY);
-
         return (
           <div
             key={cat.id}
+            ref={(el) => (cardsRef.current[i] = el)}
             role="button"
             tabIndex={0}
             aria-label={cat.name}
             className={`bg-white border border-gray-200 shadow-md text-gray-800 font-medium rounded-xl px-4 py-2 flex items-center justify-center cursor-pointer
               transition-transform transition-shadow transition-colors duration-300
-              ${hovered === i ? "scale-110 border-blue-300 shadow-lg z-10" : ""}
               text-xs md:text-sm pointer-events-auto`}
             style={{
               position: "absolute",
-              left: `calc(${pos.x}% + ${xOffset}px)`,
-              top: `calc(${pos.y}% + ${yOffset}px)`,
+              left: `${pos.x}%`,
+              top: `${pos.y}%`,
               minWidth: 90,
               maxWidth: 180,
               whiteSpace: "nowrap",
-              fontSize: hovered === i ? "1.12rem" : "1rem",
-              transition: "all 0.28s cubic-bezier(.4,2,.6,1)",
+              fontSize: "1rem",
               userSelect: "none",
-              boxShadow: hovered === i
-                ? "0 4px 24px 0 #b0b0b044"
-                : "0 2px 8px 0 #0001",
-              opacity: hide ? 0 : 1,
-              pointerEvents: hide ? "none" : "auto",
-              zIndex: hovered === i ? 10 : hide ? 0 : 1,
+              boxShadow: "0 2px 8px 0 #0001",
+              zIndex: 1,
             }}
-            onMouseEnter={() => setHovered(i)}
-            onMouseLeave={() => setHovered(null)}
             onClick={() => handleClick(cat)}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") handleClick(cat);
