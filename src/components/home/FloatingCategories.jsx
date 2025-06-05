@@ -2,8 +2,8 @@ import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { PLACE_CATEGORIES } from "../../data/categories";
 
-// 20 random categories (aap jitni chaho utni le sakte ho)
-const categories = PLACE_CATEGORIES.slice(0, 25);
+// 22 random categories (aur bhi le sakte ho)
+const categories = PLACE_CATEGORIES.slice(0, 22);
 
 function getRandom(min, max) {
   return Math.random() * (max - min) + min;
@@ -18,8 +18,8 @@ export default function FloatingCategories() {
   // Random positions ek hi bar generate karo
   const positionsRef = useRef(
     categories.map(() => ({
-      x: getRandom(10, 80), // percent of width
-      y: getRandom(5, 70),  // percent of height
+      x: getRandom(10, 85), // percent of width
+      y: getRandom(10, 70), // percent of height
     }))
   );
 
@@ -49,8 +49,8 @@ export default function FloatingCategories() {
       onMouseLeave={handleMouseLeave}
     >
       {categories.map((cat, i) => {
-        // X position: random + mouse offset (max 40px left/right)
-        const xOffset = offset * 40;
+        // X position: random + mouse offset (max 48px left/right)
+        const xOffset = offset * 48;
         const pos = positionsRef.current[i];
         return (
           <div
@@ -58,7 +58,7 @@ export default function FloatingCategories() {
             role="button"
             tabIndex={0}
             aria-label={cat.name}
-            className={`bg-white border border-gray-200 shadow-md text-gray-800 font-medium rounded-xl px-4 py-2 flex items-center justify-center cursor-pointer transition-all duration-300
+            className={`bg-white border border-gray-200 shadow-md text-gray-800 font-medium rounded-xl px-3 py-1 flex items-center justify-center cursor-pointer transition-all duration-300
               ${hovered === i ? "scale-110 border-blue-300 shadow-lg z-10" : ""}
               text-xs md:text-sm pointer-events-auto`}
             style={{
@@ -68,9 +68,12 @@ export default function FloatingCategories() {
               minWidth: 90,
               maxWidth: 180,
               whiteSpace: "nowrap",
-              fontSize: hovered === i ? "1.1rem" : "1rem",
+              fontSize: hovered === i ? "1.08rem" : "0.98rem",
               transition: "all 0.25s cubic-bezier(.4,2,.6,1)",
               userSelect: "none",
+              boxShadow: hovered === i
+                ? "0 4px 24px 0 #b0b0b044"
+                : "0 2px 8px 0 #0001",
             }}
             onMouseEnter={() => setHovered(i)}
             onMouseLeave={() => setHovered(null)}
