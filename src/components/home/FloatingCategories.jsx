@@ -1,28 +1,26 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import categoriesData from "../../data/categories";
+import { PLACE_CATEGORIES } from "../../data/categories";
 
-const categories = categoriesData
+const categories = PLACE_CATEGORIES
   .filter((cat) =>
     [
       "hotels",
-      "restaurants",
+      "restaurant",
       "hospitals",
       "schools",
       "gyms",
-      "cafes",
-      "malls",
+      "coffeeshops",
+      "shoppingmalls",
       "parks",
       "museums",
-      "theaters",
+      "cinemas",
     ].includes(cat.id)
   )
   .map((cat) => ({
     id: cat.id,
     name: cat.name,
-    // Default color if not set in data
     color: cat.color || "bg-white border-lime-300",
-    // Default icon color lime if not set in data
     icon: cat.icon,
   }));
 
