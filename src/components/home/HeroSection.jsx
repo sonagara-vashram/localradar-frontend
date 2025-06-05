@@ -9,6 +9,8 @@ import {
   CountuniousText,
   LeftToRightText,
 } from "../../animation/AnimatedText";
+import FloatingCategories from "./FloatingCategories";
+
 // import AnimateButton from "../common/Button2";
 
 const HeroSection = () => {
@@ -36,6 +38,7 @@ const HeroSection = () => {
 
   return (
     <div className=" min-h-screen p-5 flex flex-col items-center m-auto z-50">
+      <FloatingCategories />
       <div className="flex flex-col items-center justify-center flex-grow px-6 text-center sm:mt-[-9rem] md:mt-[-2rem] lg:mt-5">
         <div className="text-5xl sm:text-6xl md:text-7xl text-gray-900 max-w-2xl leading-tight font-poppins font-semibold flex flex-wrap justify-center gap-x-2 sm:gap-x-3">
           <AnimatedText text={discoverText} />
