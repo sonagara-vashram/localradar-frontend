@@ -38,20 +38,6 @@ const inputFocusAnimation = {
 };
 
 const Header = () => {
-  const [darkMode, setDarkMode] = useState(() => {
-    // Local storage se theme check karo
-    return localStorage.getItem("theme") === "dark";
-  });
-
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    }
-  }, [darkMode]);
   const navigate = useNavigate();
   const location = useLocation(); // Add this to track current route
 
@@ -168,21 +154,6 @@ const Header = () => {
       </div>
       <div className="hidden md:flex mx-8 items-center">
         <AnimateButton to="/login" text="Sign In" />
-        <div className="hidden md:flex mx-8 items-center">
-        <AnimateButton to="/login" text="Sign In" />
-        {/* Theme toggle button */}
-        <button
-          onClick={() => setDarkMode(!darkMode)}
-          className="ml-3 p-2 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
-          title="Toggle theme"
-        >
-          {darkMode ? (
-            <span role="img" aria-label="Light mode">🌞</span>
-          ) : (
-            <span role="img" aria-label="Dark mode">🌙</span>
-          )}
-        </button>
-      </div>
       </div>
 
       {/* Mobile search toggle - below md screens */}
