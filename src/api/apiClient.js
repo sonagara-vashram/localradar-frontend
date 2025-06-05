@@ -8,10 +8,10 @@ if (!BASE_URL) {
 
 const apiClient = axios.create({
   baseURL: BASE_URL,
+  timeout: 30000,
   headers: {
     "Content-Type": "application/json",
   },
-  timeout: 10000,
 });
 
 apiClient.interceptors.request.use(

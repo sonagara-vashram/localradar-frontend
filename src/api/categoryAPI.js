@@ -38,12 +38,17 @@ export const fetchCategoryData = async (category, location) => {
     // console.log("API response data:", response.data);
     return response.data;
   } catch (error) {
-    console.error(
-      "Error fetching category data:",
-      error?.response?.data || error.message,
-    );
-    throw error;
-  }
+      let message = "Failed to load data. Please try again later.";
+      if (error.code === "ECONNABORTED") {
+        message = "Request timed out. Please check your internet connection.";
+      } else if (error.response && error.response.data && error.response.data.message) {
+        message = error.response.data.message;
+      } else if (error.message) {
+        message = error.message;
+      }
+      console.error("Error fetching category data:", message);
+      throw new Error(message);
+    }
 };
 
 // Category Mapping
