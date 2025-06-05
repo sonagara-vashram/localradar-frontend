@@ -70,11 +70,11 @@ export default function FloatingCategories() {
         const hide = isInAnyAvoidArea(cardX, cardY);
 
         gsap.to(cardsRef.current[i], {
-          x: `${xOffset}px`,
-          y: `${yOffset}px`,
-          opacity: hide ? 0 : 1,
-          duration: 0.3,
-          ease: "power2.out",
+          x: hide ? 0 : `${xOffset}px`, // Reset position if hidden
+          y: hide ? 0 : `${yOffset}px`,
+          opacity: hide ? 0.5 : 1, // Smooth fade instead of abrupt disappearance
+          duration: 0.5, // Increase duration for smoother animation
+          ease: "power3.out", // Use a smoother easing function
         });
       });
     };
@@ -84,8 +84,9 @@ export default function FloatingCategories() {
         gsap.to(cardsRef.current[i], {
           x: "0px",
           y: "0px",
-          duration: 0.5,
-          ease: "power2.out",
+          opacity: 1, // Ensure opacity resets to 1
+          duration: 0.7, // Slightly longer duration for smooth reset
+          ease: "power3.out", // Smooth easing
         });
       });
     };
