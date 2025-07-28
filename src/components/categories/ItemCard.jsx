@@ -82,7 +82,7 @@ const ItemCard = ({ item, categoryId, styles }) => {
         {/* Button section - always at the bottom */}
         <div className="px-6 py-5">
           <button
-            className={`w-full relative overflow-hidden rounded-xl py-3 font-medium text-white transition-all duration-500 ${styles.buttonGradient} shadow-lg`}
+            className={`w-full relative overflow-hidden rounded-xl py-3 font-medium text-white transition-all duration-500 ${styles.buttonGradient} shadow-lg cursor-pointer`}
           >
             {/* Button shine effect */}
             <div className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
