@@ -139,6 +139,17 @@ const SearchResult = () => {
     handleSeeAllCategory(categoryId);
   };
 
+  useEffect(() => {
+    if (isLoading) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isLoading]);
+
   return (
     <div className="mt-16 min-h-screen bg-white">
       {/* Simple header for search results */}
