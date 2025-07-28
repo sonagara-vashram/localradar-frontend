@@ -153,7 +153,7 @@ export default function Contact() {
       <div className="w-full max-w-7xl flex flex-col md:flex-row justify-center mx-auto gap-6 sm:gap-10 px-4 sm:px-0">
         <div className="w-full md:w-1/2">
           <p className="text-base sm:text-xl text-gray-700 font-semibold font-poppins">
-            We are Local Radar, and we are here to serve! How can we help you?
+            We are Local Radar, and we are here to answer your every query. Use the form below to tell us your concerns.
           </p>
           <p className="text-base sm:text-sm text-gray-700 font-poppins mt-5 tracking-wide leading-6">
             If you have any questions about location-based searches, job
