@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "https://local-radar.onrender.com";
+const BASE_URL = "https://localradar-app-g2e4etfke2d2brcy.centralindia-01.azurewebsites.net";
 
 if (!BASE_URL) {
   console.error("Error: VITE_API_BASE_URL is not defined in environment variables.");
