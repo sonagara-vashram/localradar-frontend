@@ -1,9 +1,11 @@
 import axios from "axios";
 
-const BASE_URL = "https://localradar-app-g2e4etfke2d2brcy.centralindia-01.azurewebsites.net";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-if (!BASE_URL) {
-  console.error("Error: VITE_API_BASE_URL is not defined in environment variables.");
+if (!import.meta.env.VITE_API_BASE_URL) {
+  console.warn(
+    "Warning: VITE_API_BASE_URL is not defined in environment variables, using default URL.",
+  );
 }
 
 const apiClient = axios.create({

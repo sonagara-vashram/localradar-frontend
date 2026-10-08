@@ -1,8 +1,8 @@
 import apiClient from "./apiClient";
 import CryptoJS from "crypto-js";
 
-const API_KEY = "secure_api_key";
-const API_SECRET = "A9x2GzQ7mS4pL1r0";
+const API_SIGNATURE = import.meta.env.VITE_API_SIGNATURE
+const API_SECRET = import.meta.env.VITE_API_SECRET || "A9x2GzQ7mS4pL1r0";
 
 // Generate API Signature
 const getSignature = (method, path, timestamp) =>
@@ -11,7 +11,7 @@ const getSignature = (method, path, timestamp) =>
 // Get API Headers
 const getHeaders = (timestamp, signature) => ({
   "Content-Type": "application/json",
-  "X-API-KEY": API_KEY,
+  "X-API-KEY": API_SIGNATURE,
   "X-Timestamp": timestamp,
   "X-Signature": signature,
 });
